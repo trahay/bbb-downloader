@@ -20,11 +20,16 @@ By default, BBB records videos in the `webm` format. You can convert it using `w
 
 ## Capturing the full playback with the elgalu/selenium Docker image
 
+This will play the recording in a browser running inside a Docker
+container, and will capture the video and sound of that browser windows.
+
 See https://github.com/elgalu/docker-selenium for more details on the
 docker image that pilots a web browser.
 
 Assembled in a the run.sh script
 
 1. npm install
-2. bash run.sh
+2. bash capture-full-replay.sh URL
 
+Wait until the full playback is done, and get the resulting MP4 video
+in the 'videos/' subdir.
