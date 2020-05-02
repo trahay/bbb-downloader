@@ -14,7 +14,7 @@ url=$1
 seconds=$(python3 bbb.py duration "$url")
 
 # Add some delay for selenium to complete
-seconds=$(expr $seconds + 10)
+seconds=$(expr $seconds + 3)
 
 # Startup Selenium server
 docker run --rm -d --name=grid -p 4444:24444 -p 5920:25900 \
