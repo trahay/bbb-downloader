@@ -1,0 +1,10 @@
+{
+  "name": "somename",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {},
+  "license": "MIT",
+  "dependencies": {
+    "selenium-webdriver": "^3.3.0"
+  }
+}
