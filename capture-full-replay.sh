@@ -17,13 +17,14 @@ seconds=$(python3 bbb.py duration "$url")
 seconds=$(expr $seconds + 3)
 
 # Startup Selenium server
+#  -e VIDEO_FILE_EXTENSION="mkv" \
 docker run --rm -d --name=grid -p 4444:24444 -p 5920:25900 \
   --shm-size=2g -e VNC_PASSWORD=hola \
   -e VIDEO=true -e AUDIO=true \
   -e SCREEN_WIDTH=1080 -e SCREEN_HEIGHT=720 \
   -e FFMPEG_DRAW_MOUSE=0 \
   -e FFMPEG_FRAME_RATE=24 \
-  -e VIDEO_FILE_EXTENSION="mkv" \
+  -e FFMPEG_CODEC_ARGS="-vcodec libx264 -preset ultrafast -pix_fmt yuv420p -strict -2 -acodec aac" \
   elgalu/selenium
 
 docker exec grid wait_all_done 30s
