@@ -12,6 +12,18 @@ $ ./bbb_downloader.sh URL [output_file]
 
 It saves the video as `output_file` ( by default: `output.webm`)
 
+The `bbb_downloader.sh` script downloads the following files:
+
+- `deskshare.webm`: contains the video of the deskshare
+
+- `webcam.webm`: contains the video of the webcam with the recorded sound track
+
+- `output.opus`: contains the recorded sound track extracted from `webcam.webm`
+
+- output_file (by default: `output.webm`): contains the video of the deskshare with the sound track.
+
+
+
 ## Converting a video to MP4
 
 By default, BBB records videos in the `webm` format. You can convert it using `webm_to_mp4.sh`:
