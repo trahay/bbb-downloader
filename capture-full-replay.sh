@@ -12,6 +12,10 @@ url=$1
 
 # Extract duration from associate metadata file
 seconds=$(python3 bbb.py duration "$url")
+if [ $? -ne 0 ]; then
+    # bbb.py failed because of a wrong url
+    exit 1
+fi
 
 # Add some delay for selenium to complete
 seconds=$(expr $seconds + 3)

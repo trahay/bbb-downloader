@@ -53,6 +53,10 @@ class BigBlueButtonExtractor:
     def _real_extract(self, url):
         self._VALID_URL_RE = re.compile(self._VALID_URL)
         m = self._VALID_URL_RE.match(url)
+        if m is None:
+            sys.stderr.write(url + " is not a BBB video\n")
+            sys.exit(1);
+
         website = m.group('website')
 
         video_id = m.group('id')
@@ -126,4 +130,3 @@ if __name__ == '__main__' :
     extractor._real_extract(sys.argv[2])
     attrval = getattr(extractor, sys.argv[1])
     print(attrval)
-    #print('coin')
