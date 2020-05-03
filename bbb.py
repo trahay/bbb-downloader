@@ -18,6 +18,7 @@ import re
 import urllib
 import urllib.request
 import xml.etree.ElementTree as ET
+from pprint import pprint
 
 import time
 from datetime import datetime, timedelta, timezone
@@ -65,25 +66,17 @@ class BigBlueButtonExtractor:
         metadata_url = website + '/presentation/' + video_id + '/metadata.xml'
 
         metadata = urllib.request.urlopen(metadata_url).read().decode()
-        #print(metadata)
         root = ET.fromstring(metadata)
-        #print(root)
 
         # id = xpath_text(metadata, 'id')
         self.id = root.find('id').text
-        #print(self.id)
         meta = root.find('./meta')
         self.meeting_name = meta.find('meetingName').text
-        #print(self.meeting_name)
         self.start_time = int(root.find('start_time').text)
-        #print("start time: %d" % self.start_time)
 
         self.end_time = int(root.find('end_time').text)
-        #print(self.end_time)
 
         self.duration = int(float(self.end_time-self.start_time)/self._TIMESTAMP_UNIT)
-        #print("duration: %g" % self.duration)
-        #print(timedelta(seconds=self.duration))
 
         # This code unused : have to grasp what to do with thumbnails
         self.thumbnails = []
@@ -94,7 +87,6 @@ class BigBlueButtonExtractor:
                 'width': image.get('width'),
                 'height': image.get('height')
             })
-        #print(self.thumbnails)
 
         # This code mostly useless unless one know how to process slides
         shapes_url = website + '/presentation/' + video_id + '/shapes.svg'
@@ -105,7 +97,6 @@ class BigBlueButtonExtractor:
         self.slides = []
         for image in images:
             self.slides.append(image.get(_x('xlink:href')))
-        #print(self.slides)
         
         # We produce 2 formats :
         # - the 'webcams.webm' one, for webcams (can be used for merging its audio)
@@ -122,11 +113,19 @@ class BigBlueButtonExtractor:
                 'url': video_url,
                 'format_id': format_id
             })
-        #print(self.formats)
 
 
 if __name__ == '__main__' :
+    if len(sys.argv) == 2 :
+        url=sys.argv[1]
+    else:
+        url=sys.argv[2]
+
     extractor = BigBlueButtonExtractor()
-    extractor._real_extract(sys.argv[2])
-    attrval = getattr(extractor, sys.argv[1])
-    print(attrval)
+    extractor._real_extract(url)
+
+    if len(sys.argv) == 2 :
+        pprint(extractor.__dict__)
+    else:
+        attrval = getattr(extractor, sys.argv[1])
+        print(attrval)
