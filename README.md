@@ -6,7 +6,7 @@ A few scripts for downloading BBB videos
 
 To download BBB videos and slides, simply pass its URL to the `download_bbb_data.py`:
 ```
-$ ./bbb_downloader.sh URL [output_file]
+$ ./download_bbb_data.py URL
 ```
 
 The script downloads the following files:
