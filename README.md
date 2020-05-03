@@ -2,29 +2,42 @@
 A few scripts for downloading BBB videos
 
 
-## Downloading a video
+## Downloading BBB data
 
-To download a BBB video, simply pass its URL to the bbb_downloader.sh script
+To download BBB videos and slides, simply pass its URL to the `download_bbb_data.py`:
 ```
 $ ./bbb_downloader.sh URL [output_file]
 ```
 
+The script downloads the following files:
 
-It saves the video as `output_file` ( by default: `output.webm`)
+- `Videos/deskshare.webm`: contains the video of the deskshare
 
-The `bbb_downloader.sh` script downloads the following files:
+- `Videos/webcam.webm`: contains the video of the webcam with the recorded sound track
 
-- `deskshare.webm`: contains the video of the deskshare
+- `Slides/`: contains the slides
 
-- `webcam.webm`: contains the video of the webcam with the recorded sound track
+- `Thumbnails/`: contains the thumbnails
+
+
+### Adding the sound track to the deskshare video
+
+
+The recorded sound track is stored in the webcam video, and the
+deskshare does not contain any sound. To integrate the sound track to
+the deskshare video, run the `integrate_soundtrack.sh` script:
+
+```./integrate_soundtrack.sh Videos [output_file]```
+
+
+The script creates two files:
 
 - `output.opus`: contains the recorded sound track extracted from `webcam.webm`
 
 - output_file (by default: `output.webm`): contains the video of the deskshare with the sound track.
 
 
-
-## Converting a video to MP4
+### Converting a video to MP4
 
 By default, BBB records videos in the `webm` format. You can convert it using `webm_to_mp4.sh`:
 
