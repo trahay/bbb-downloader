@@ -58,12 +58,12 @@ class BigBlueButtonExtractor:
             sys.stderr.write(url + " is not a BBB video\n")
             sys.exit(1);
 
-        website = m.group('website')
+        self.website = m.group('website')
 
         video_id = m.group('id')
 
         # Extract basic metadata (more available in metadata.xml)
-        metadata_url = website + '/presentation/' + video_id + '/metadata.xml'
+        metadata_url = self.website + '/presentation/' + video_id + '/metadata.xml'
 
         metadata = urllib.request.urlopen(metadata_url).read().decode()
         root = ET.fromstring(metadata)
@@ -89,7 +89,7 @@ class BigBlueButtonExtractor:
             })
 
         # This code mostly useless unless one know how to process slides
-        shapes_url = website + '/presentation/' + video_id + '/shapes.svg'
+        shapes_url = self.website + '/presentation/' + video_id + '/shapes.svg'
         #print(shapes_url)
         shapes_text = urllib.request.urlopen(shapes_url).read().decode()
         shapes = ET.fromstring(shapes_text)
@@ -108,7 +108,7 @@ class BigBlueButtonExtractor:
             'deskshare': '/deskshare/deskshare.webm'
         }
         for format_id, source in sources.items():
-            video_url = website + '/presentation/' + video_id + source
+            video_url = self.website + '/presentation/' + video_id + source
             self.formats.append({
                 'url': video_url,
                 'format_id': format_id
