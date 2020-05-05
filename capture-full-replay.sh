@@ -3,18 +3,21 @@
 # This will capture the replay, played in a controlled web browser,
 # using a Docker container running Selenium
 
-if [ $# -ne 1 ]; then
-    echo "Need a replay URL as argument" >&2
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 URL [duration]" >&2
     exit
 fi
 
 url=$1
-
-# Extract duration from associate metadata file
-seconds=$(python3 bbb.py duration "$url")
-if [ $? -ne 0 ]; then
-    # bbb.py failed because of a wrong url
-    exit 1
+if [ $# -eq 2 ]; then
+    seconds=$2
+else
+    # Extract duration from associate metadata file
+    seconds=$(python3 bbb.py duration "$url")
+    if [ $? -ne 0 ]; then
+	# bbb.py failed because of a wrong url
+	exit 1
+    fi
 fi
 
 # Add some delay for selenium to complete
