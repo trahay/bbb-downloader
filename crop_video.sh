@@ -1,13 +1,19 @@
 #!/bin/bash
 
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 input_file output_file" >&2
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 input_file output_file [startup_duration]" >&2
     exit 1
 fi
 
 input=$1
 output=$2
+startup_duration=11 # duration of firefox startup (that will be cut out of the video)
+
+if [ $# -eq 3 ]; then
+    startup_duration=$3
+fi
+ 
 
 video_size=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 $input )
 height=$(echo $video_size |awk -Fx '{print $2}')
@@ -17,8 +23,6 @@ echo "height=$height, width=$width"
 
 upper_window=144 # height of the upper part of the firefox window
 lower_window=56 # height of the lower part of the firefox window
-
-startup_duration=11 # duration of firefox startup (that will be cut out of the video)
 
 #out_w is the width of the output rectangle
 out_w=$width
