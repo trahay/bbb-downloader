@@ -31,6 +31,10 @@ done
 
 # remove the options from the command line
 shift $(($OPTIND - 1))
+if [ $# -lt 2 ]; then
+    usage
+    exit 2
+fi
 
 input=$1
 output=$2
