@@ -63,9 +63,9 @@ class BigBlueButtonExtractor:
         video_id = m.group('id')
 
         # Extract basic metadata (more available in metadata.xml)
-        metadata_url = self.website + '/presentation/' + video_id + '/metadata.xml'
+        self.metadata_url = self.website + '/presentation/' + video_id + '/metadata.xml'
 
-        metadata = urllib.request.urlopen(metadata_url).read().decode()
+        metadata = urllib.request.urlopen(self.metadata_url).read().decode()
         root = ET.fromstring(metadata)
 
         # id = xpath_text(metadata, 'id')
