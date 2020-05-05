@@ -10,13 +10,7 @@ OPTIONS:
    -s startup_duration              Remove the first startup_duration seconds of the video
    -m   	       	            Only show the main screen (ie. remove the webcam)
 EOF
-
 }
-
-if [ $# -lt 2 ]; then
-    echo "Usage: $0 input_file output_file [startup_duration]" >&2
-    exit 1
-fi
 
 startup_duration=11 # duration of firefox startup (that will be cut out of the video)
 main_screen_only=n
