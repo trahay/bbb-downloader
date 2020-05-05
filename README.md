@@ -58,3 +58,11 @@ Assembled in a the run.sh script
 
 Wait until the full playback is done, and get the resulting MP4 video
 in the 'videos/' subdir.
+
+### Cropping a captured video
+
+By default, the script captures a firefox window that displays the BBB stream, you remove the firefox window  by cropping the video with `crop_video.sh`:
+
+```
+./crop_video.sh input.mp4 output.mp4
+```
