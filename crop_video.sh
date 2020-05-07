@@ -8,17 +8,22 @@ usage: $0 [options] input_file output_file
 OPTIONS:
    -?                               Show this message
    -s startup_duration              Remove the first startup_duration seconds of the video
+   -e stop_duration                 Cut the video after stop_duration (from the start of the input video)
    -m   	       	            Only show the main screen (ie. remove the webcam)
 EOF
 }
 
 startup_duration=11 # duration of firefox startup (that will be cut out of the video)
+stop_duration=0
 main_screen_only=n
 
-while getopts 's:m' OPTION; do
+while getopts 's:e:m' OPTION; do
     case $OPTION in
 	s)
 	    startup_duration=$OPTARG
+	    ;;
+	e)
+	    stop_duration=$OPTARG
 	    ;;
 	m)
 	    main_screen_only=y
@@ -43,6 +48,13 @@ video_size=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,hei
 height=$(echo $video_size |awk -Fx '{print $2}')
 width=$(echo $video_size |awk -Fx '{print $1}')
 
+
+if [ -n "$stop_duration" ]; then
+    duration=$(echo "$stop_duration - $startup_duration"|bc)
+    DURATION_OPTION="-t $duration"
+fi
+
+
 echo "height=$height, width=$width"
 
 upper_window=144 # height of the upper part of the firefox window
@@ -62,4 +74,4 @@ x=0
 y=$upper_window
 
 
-ffmpeg -ss $startup_duration -i "$input" -filter:v "crop=$out_w:$out_h:$x:$y" "$output"
+ffmpeg -ss $startup_duration -i "$input" -filter:v "crop=$out_w:$out_h:$x:$y" $DURATION_OPTION "$output"
