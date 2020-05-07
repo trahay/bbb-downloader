@@ -64,5 +64,11 @@ in the 'videos/' subdir.
 By default, the script captures a firefox window that displays the BBB stream, you remove the firefox window  by cropping the video with `crop_video.sh`:
 
 ```
-./crop_video.sh input.mp4 output.mp4
+./crop_video.sh [OPTION] input.mp4 output.mp4
+OPTIONS:
+   -?                               Show this message
+   -s startup_duration              Remove the first startup_duration seconds of the video
+   -e stop_duration                 Cut the video after stop_duration (from the start of the input video)
+   -m                               Only show the main screen (ie. remove the webcam)
+
 ```
