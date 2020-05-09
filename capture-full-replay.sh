@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# progress_bar.sh copied from https://github.com/nachoparker/progress_bar.sh
+. progress_bar.sh
+
 # This will capture the replay, played in a controlled web browser,
 # using a Docker container running Selenium
 
@@ -9,18 +12,22 @@ if [ $# -lt 1 ]; then
 fi
 
 url=$1
+
+video_id=$(python3 bbb.py id "$url")
+
 if [ $# -eq 2 ]; then
     seconds=$2
 else
     # Extract duration from associate metadata file
-    seconds=$(python3 bbb.py duration "$url")
+    #seconds=$(python3 bbb.py duration "$url")
+    python3 ./download_bbb_data.py "$url"
+    seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
+    seconds=$( echo "($seconds+0.5)/1" | bc )
     if [ $? -ne 0 ]; then
 	# bbb.py failed because of a wrong url
 	exit 1
     fi
 fi
-
-video_id=$(python3 bbb.py id "$url")
 
 # Add some delay for selenium to complete
 seconds=$(expr $seconds + 3)
@@ -48,7 +55,10 @@ echo "Please wait for $seconds seconds, while we capture the playback..."
 echo
 
 # Run selenium to capture video
-node selenium-play-bbb-recording.js "$url" $seconds $bound_port
+node selenium-play-bbb-recording.js "$url" $seconds $bound_port &
+
+sleep 10
+progress_bar $(echo "$seconds - 10" | bc)
 
 # Save the captured video
 docker exec $container_name stop-video
