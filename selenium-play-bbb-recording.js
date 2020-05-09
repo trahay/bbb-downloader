@@ -9,7 +9,7 @@ var webdriver = require('selenium-webdriver'),
 var driver = new webdriver.Builder()
 /*    .forBrowser('chrome') */
     .forBrowser('firefox')
-    .usingServer('http://localhost:4444/wd/hub')
+    .usingServer('http://localhost:'+ myArgs[2] + '/wd/hub')
     .build();
 
 /* load webpage given its URL */

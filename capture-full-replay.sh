@@ -20,12 +20,17 @@ else
     fi
 fi
 
+video_id=$(python3 bbb.py id "$url")
+
 # Add some delay for selenium to complete
 seconds=$(expr $seconds + 3)
 
+container_name=grid$$
+
 # Startup Selenium server
 #  -e VIDEO_FILE_EXTENSION="mkv" \
-docker run --rm -d --name=grid -p 4444:24444 -p 5920:25900 \
+    #  -p 5920:25900 : we don't need to connect via VNC
+docker run --rm -d --name=$container_name -P --expose 24444 \
   --shm-size=2g -e VNC_PASSWORD=hola \
   -e VIDEO=true -e AUDIO=true \
   -e SCREEN_WIDTH=1080 -e SCREEN_HEIGHT=720 \
@@ -34,19 +39,28 @@ docker run --rm -d --name=grid -p 4444:24444 -p 5920:25900 \
   -e FFMPEG_CODEC_ARGS="-vcodec libx264 -preset ultrafast -pix_fmt yuv420p -strict -2 -acodec aac" \
   elgalu/selenium
 
-docker exec grid wait_all_done 30s
+bound_port=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "24444/tcp") 0).HostPort}}' $container_name)
+
+docker exec $container_name wait_all_done 30s
 
 echo 
 echo "Please wait for $seconds seconds, while we capture the playback..."
 echo
 
 # Run selenium to capture video
-node selenium-play-bbb-recording.js "$url" $seconds
+node selenium-play-bbb-recording.js "$url" $seconds $bound_port
 
 # Save the captured video
-docker exec grid stop-video
-docker cp grid:/videos/. videos
-docker stop grid
+docker exec $container_name stop-video
+
+output_dir=$(mktemp -d)
+
+docker cp $container_name:/videos/. $output_dir
+docker stop $container_name
+
+captured_video=$(ls -1 $output_dir/*.mp4)
+mv $captured_video $video_id.mp4
+rm -fr $output_dir
 
 echo
-echo "DONE. Your video should be in 'video/'"
+echo "DONE. Your video is ready in $video_id.mp4"
