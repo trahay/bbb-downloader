@@ -1,3 +1,11 @@
+/*
+ * Drives Selenium to record the replay
+ * args :
+ *  - URL
+ *  - seconds to record
+ *  - port to connect to
+ */
+
 /* Capture a recording playback with Selenium for a certain duration */
 var myArgs = process.argv.slice(2);
 /*console.log('myArgs: ', myArgs);*/
