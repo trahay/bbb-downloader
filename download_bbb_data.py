@@ -46,6 +46,9 @@ if __name__ == '__main__' :
     website=getattr(extractor, "website")
     meeting_id=getattr(extractor, "id")
 
+    os.makedirs(meeting_id, exist_ok=True)
+    os.chdir(meeting_id)
+    
     # download slides in Slides
     print("Downloading Slides")
     i=1
@@ -86,3 +89,5 @@ if __name__ == '__main__' :
             print("["+str(i)+"/"+str(len(extractor.formats))+"]  no '" + formats['format_id'] + "' recording could be found at " + formats['url'] + " (" + str(status_code) + ").")
 
         i += 1
+        
+    print("Everyting was downloaded into '" + meeting_id + "/'.")
