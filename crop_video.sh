@@ -49,7 +49,7 @@ height=$(echo $video_size |awk -Fx '{print $2}')
 width=$(echo $video_size |awk -Fx '{print $1}')
 
 
-if [ -n "$stop_duration" ]; then
+if [ "$stop_duration" -gt 0 ]; then
     duration=$(echo "$stop_duration - $startup_duration"|bc)
     DURATION_OPTION="-t $duration"
 fi
