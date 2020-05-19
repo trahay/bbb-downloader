@@ -54,7 +54,8 @@ docker image that pilots a web browser.
 Assembled in a the run.sh script
 
 1. npm install
-2. bash capture-full-replay.sh URL
+2. pip3 install progressbar
+3. bash capture-full-replay.sh URL
 
 Wait until the full playback is done, and get the resulting MP4 video
 in the 'videos/' subdir.

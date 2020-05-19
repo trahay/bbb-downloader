@@ -74,4 +74,4 @@ x=0
 y=$upper_window
 
 
-ffmpeg -ss $startup_duration -i "$input" -filter:v "crop=$out_w:$out_h:$x:$y" $DURATION_OPTION "$output"
+ffmpeg -y -ss $startup_duration -i "$input" -filter:v "crop=$out_w:$out_h:$x:$y" $DURATION_OPTION "$output"
