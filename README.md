@@ -48,6 +48,8 @@ By default, BBB records videos in the `webm` format. You can convert it using `w
 This will play the recording in a browser running inside a Docker
 container, and will capture the video and sound of that browser windows.
 
+See this video for an explanation and demo: https://player.vimeo.com/video/420302036
+
 See https://github.com/elgalu/docker-selenium for more details on the
 docker image that pilots a web browser.
 
