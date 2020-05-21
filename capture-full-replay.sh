@@ -68,7 +68,7 @@ url=$1
 video_id=$(python3 bbb.py id "$url")
 
 if [ -z $output_file ]; then
-    output_file=video_id.mp4
+    output_file=$video_id.mp4
 fi
 
 if [ $# -eq 2 ]; then
