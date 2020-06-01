@@ -86,7 +86,7 @@ else
 fi
 
 # Add some delay for selenium to complete
-seconds=$(expr $seconds + 3)
+seconds=$(expr $seconds + 5)
 
 container_name=grid$$
 

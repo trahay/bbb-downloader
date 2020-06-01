@@ -32,7 +32,7 @@ driver.manage().window().maximize();
 /*driver.findElement(By.tagName("body")).sendKeys(webdriver.Key.F11);*/
 
 /* Start playback */
-driver.sleep(1000 * 2);
+driver.sleep(1000 * 4);
 driver.findElement(By.className('acorn-play-button')).click();
 
 /* Stop after the required number of seconds */
