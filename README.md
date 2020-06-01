@@ -11,9 +11,9 @@ $ ./download_bbb_data.py URL
 
 The script downloads the following files:
 
-- `Videos/deskshare.webm`: contains the video of the deskshare
+- `Videos/deskshare.[webm|mp4]`: contains the video of the deskshare
 
-- `Videos/webcam.webm`: contains the video of the webcam with the recorded sound track
+- `Videos/webcam.[webm|mp4]`: contains the video of the webcam with the recorded sound track
 
 - `Slides/`: contains the slides
 
@@ -37,9 +37,18 @@ The script creates two files:
 - output_file (by default: `output.webm`): contains the video of the deskshare with the sound track.
 
 
-### Converting a video to MP4
+### Selecting video format
 
-By default, BBB records videos in the `webm` format. You can convert it using `webm_to_mp4.sh`:
+Depending on the configuration of your BBB instance, the recorded
+videos will be available on the server directly in `mp4` or `webm`
+format. By default, the script will try to download in webm format,
+and tries to fallback to mp4 if webm is not available. You can select
+the desired format with the `-f webm` or `-f mp4`
+option. Unfortunately, there doesn't seem to be a way to auto-detect
+which format is available on a prticular server.
+
+In case you downloaded the webm and want mp4, you can convert it using
+`webm_to_mp4.sh`:
 
 ```$ ./webm_to_mp4.sh output.webm output.mp4```
 
