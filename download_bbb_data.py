@@ -30,12 +30,32 @@ def download_file(url, filename, n_chunk=1):
         print("")
     return r.status_code
 
-
+def download_video(video_url, video_name, file_format):
+    status_code = download_file(video_url, video_name)
+    if status_code == 404 :
+        print("Could not find format '"+file_format+"' at " + video_url+". Trying alternate format...")
+        if file_format == 'webm' :
+            file_format = 'mp4'
+        elif file_format == 'mp4':
+            file_format = 'webm'
+        else:
+            print("Unsupported format : "+file_format)
+            return None
+        video_name = ".".join(video_name.split('.')[:-1])+'.'+ file_format
+        video_url = ".".join(video_url.split('.')[:-1])+'.'+ file_format
+        
+        status_code = download_file(video_url, video_name)
+        if status_code != 200:
+            print("Could not find format '"+file_format+"' at " + video_url+" either.")
+            file_format = None
+    return file_format
+        
 if __name__ == '__main__' :
     download_slides = False
     download_videos = False
     download_thumbnails = False
-    
+    file_format = 'webm'
+
     parser = argparse.ArgumentParser()
     parser.add_argument('url', 
                         help='the URL of a BBB recording replay page')
@@ -45,11 +65,19 @@ if __name__ == '__main__' :
                         help='download only videos')
     parser.add_argument('-t', '--thumbnails', action='store_true',
                         help='download only thumbnails')
+    parser.add_argument('-f', '--format',
+                        help="video format to be downloaded ('webm' or 'mp4')")
     parser.add_argument('output_dir', nargs='?',
                         help='output dir')
     args = parser.parse_args()
     url = args.url
 
+    if args.format:
+        file_format = args.format
+        if (file_format != 'webm') and (file_format != 'mp4') :
+            print('unsupported format '+file_format)
+            sys.exit(1)
+        
     if args.slides:
         download_slides = True
 
@@ -112,17 +140,27 @@ if __name__ == '__main__' :
     if download_videos:
         # download videos in Videos
         print("Downloading Videos")
-        i=1
         os.makedirs(output_videos_dir, exist_ok=True)
-        for formats in extractor.formats:
-            video_name=output_videos_dir+formats['url'].split('/')[-1]
 
-            status_code = download_file(formats['url'], video_name)
-            if status_code != 404 :
-                print("["+str(i)+"/"+str(len(extractor.formats))+"]  saved '"+formats['format_id']+ "' ("+formats['url']+").")
-            else :
-                print("["+str(i)+"/"+str(len(extractor.formats))+"]  no '" + formats['format_id'] + "' recording could be found at " + formats['url'] + " (" + str(status_code) + ").")
+        # Try downloading webcams first, then deskshare
+        i=1
+        for format_id in ['webcams', 'deskshare']:
+            
+            video_url=None
+            for format in extractor.formats:
+                if format['format_id'] == format_id :
+                    video_url = format['url']
+                    break
+            if video_url:
+                video_name=output_videos_dir+video_url.split('/')[-1]
+                video_name = ".".join(video_name.split('.')[:-1])+'.'+ file_format
+                video_url = ".".join(video_url.split('.')[:-1])+'.'+ file_format
+                file_format = download_video(video_url, video_name, file_format)
+                if not file_format:
+                    print("["+str(i)+"/"+str(len(extractor.formats))+"]  no '" + format_id + "' recording could be found at " + video_url + ".")
+                else:
+                    print("["+str(i)+"/"+str(len(extractor.formats))+"]  saved '"+format_id+ "' ("+video_url+").")
 
-            i += 1
+            i+=1
         
     print("Everyting was downloaded into '" + meeting_id + "/'.")
