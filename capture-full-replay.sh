@@ -142,7 +142,7 @@ if [ "$crop" = "y" ]; then
     else
 	OPTIONS=""
     fi
-    . crop_video.sh -s "$startup_duration" -e "$stop_duration" $OPTIONS $captured_video $output_file
+    . $scriptdir/crop_video.sh -s "$startup_duration" -e "$stop_duration" $OPTIONS $captured_video $output_file
 else
     mv $captured_video $output_file
 fi
