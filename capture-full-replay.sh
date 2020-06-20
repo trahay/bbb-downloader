@@ -115,7 +115,15 @@ echo
 # Run selenium to capture video
 node selenium-play-bbb-recording.js "$url" $seconds $bound_port &
 
+# First wait for making sure the playback is started
 sleep 10
+
+# Now wait for the duration of the recording, for the capture to happen
+
+# Instead of waiting without any feedback to the user with a simple
+# "sleep", we use the progress bar script.
+# Use plain "sleep" if on MacOSX or other cases where progress_bar won't do.
+#sleep $(echo "$seconds - 10" | bc)
 progress_bar $(echo "$seconds - 10" | bc)
 
 # Save the captured video
