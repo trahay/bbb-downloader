@@ -1,7 +1,9 @@
 #!/bin/bash
 
+scriptdir=$(dirname $(realpath $0))
+
 # progress_bar.sh copied from https://github.com/nachoparker/progress_bar.sh
-. progress_bar.sh
+. $scriptdir/progress_bar.sh
 
 # This will capture the replay, played in a controlled web browser,
 # using a Docker container running Selenium
