@@ -94,23 +94,35 @@ This is your next option, if you want to capture, in a single video,
 the contents of the *slides* or *whiteboard* area of the playback.
 
 This second tool will play the recording in a browser running inside a Docker
-container, and will capture the video and sound of that browser window.
+container, and will capture the video and sound of that browser window
+(see https://github.com/elgalu/docker-selenium for more details on the
+docker image that pilots the web browser).
 
-See this video for an explanation and demo: 
+The `capture-full-replay.sh` will require some tools (Docker, ffmpeg,
+Python 3,...).
+
+Install some dependencies, before launching it:
+1. `npm install`
+2. `pip3 install progressbar`
+
+You're now ready to capture the replay of a recording, by issuing:
+
+```
+bash capture-full-replay.sh URL
+```
+where URL is the address of the playback page (see above).
+
+Now, be patient. The execution takes a little bit more than the full
+playback of the recording...
+
+Wait until the full playback is done, and get the resulting MP4 video.
+
+More options are available with `./capture-full-replay.sh --help`
+
+See this video for an explanation of how the tool works, and a demo: 
 
 [<img src="https://i.vimeocdn.com/video/895688106.jpg" width="50%">](https://player.vimeo.com/video/420302036)
 
-See https://github.com/elgalu/docker-selenium for more details on the
-docker image that pilots a web browser.
-
-Assembled in a the run.sh script
-
-1. `npm install`
-2. `pip3 install progressbar`
-3. `bash capture-full-replay.sh URL`
-
-Wait until the full playback is done, and get the resulting MP4 video
-in the 'videos/' subdir.
 
 ### Cropping a captured video
 
