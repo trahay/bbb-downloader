@@ -102,8 +102,9 @@ The `capture-full-replay.sh` will require some tools (Docker, ffmpeg,
 Python 3,...).
 
 Install some dependencies, before launching it:
-1. `npm install`
-2. `pip3 install progressbar`
+1. `sudo aptitude install bc ffmpeg docker.io python3 npm python3-pip docker.io`
+2. `npm install`
+3. `pip3 install progressbar numpy`
 
 You're now ready to capture the replay of a recording, by issuing:
 
