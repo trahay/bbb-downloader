@@ -31,7 +31,7 @@ main_screen_only=n
 crop=y
 output_file=""
 save=n
-while getopts 's:e:mco:s' OPTION; do
+while getopts 's:e:mco:S' OPTION; do
     case $OPTION in
 	s)
 	    startup_duration=$OPTARG
@@ -48,7 +48,7 @@ while getopts 's:e:mco:s' OPTION; do
 	o)
 	    output_file=$OPTARG
 	    ;;
-	s)
+	S)
 	    save=y
 	    ;;
 	?)	usage
