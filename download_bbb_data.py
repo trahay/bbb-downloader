@@ -9,6 +9,7 @@ import time
 import numpy as np
 import progressbar
 import argparse
+import re
 #import pprint
 
 # Borrowed from https://stackoverflow.com/a/37574635 adjusting the buffer size to 10Mb
@@ -16,6 +17,12 @@ def download_file(url, filename, n_chunk=1):
     r = requests.get(url, stream=True)
     # Estimates the number of bar updates
     block_size = 10*1024*1024
+
+    content_type=r.headers.get('Content-Type', None);
+    if(not re.match('video/(.*)', content_type) ):
+        # in some cases, the downloaded video is actually an html page with an error message
+        return 404
+
     content_length = r.headers.get('Content-Length', None)
     if r.status_code != 404 :
         file_size = int(content_length)
