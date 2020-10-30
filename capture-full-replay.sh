@@ -79,6 +79,7 @@ function capture() {
 	output_file=$video_id.mp4
     fi
 
+    echo "Downloading $url, and saving it as $output_file"
     if [ $# -eq 2 ]; then
 	seconds=$2
     else
@@ -171,9 +172,10 @@ if [ -z "$input_file" ]; then
     fi
 
     url=$1
-    video_id=$(python3 bbb.py id "$url")
-    capture $url $output_file $video_id 2>&1 |tee capture_${video_id}.log
-
+    if [ -n "$url" ]; then
+	video_id=$(python3 bbb.py id "$url")
+	capture $url $output_file $video_id 2>&1 |tee capture_${video_id}.log
+    fi
 else
     if ! [ -r $input_file ]; then
 	echo "Error: cannot open  file $input_file" >&2
@@ -181,8 +183,10 @@ else
     fi
 
     while read url output_file ; do
-	video_id=$(python3 bbb.py id "$url")
-	capture $url $output_file $video_id 2>&1 |tee capture_${video_id}.log
+	if [ -n "$url" ]; then
+	    video_id=$(python3 bbb.py id "$url")
+	    capture $url $output_file $video_id 2>&1 |tee capture_${video_id}.log
+	fi
     done < $input_file
     exit 1
 fi
