@@ -75,8 +75,6 @@ function capture() {
 	exit 1
     fi
 
-    echo "about to capture url='$url', output_file='$output_file'. crop = $crop"
-
     if [ -z "$output_file" ]; then
 	output_file=$video_id.mp4
     fi
