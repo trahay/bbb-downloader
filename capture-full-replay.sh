@@ -75,27 +75,30 @@ function capture() {
 	exit 1
     fi
 
+    if [ -z "$video_id" ]; then
+	exit 1
+    fi
+
     if [ -z "$output_file" ]; then
 	output_file=$video_id.mp4
     fi
 
-    echo "Downloading $url, and saving it as $output_file"
-    if [ $# -eq 2 ]; then
-	seconds=$2
-    else
-	# Extract duration from associate metadata file
-	#seconds=$(python3 bbb.py duration "$url")
-	python3 ./download_bbb_data.py -V "$url" "$video_id"
-	seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
-	seconds=$( echo "($seconds+0.5)/1" | bc )
-	if [ $? -ne 0 ]; then
-	    # bbb.py failed because of a wrong url
-	    exit 1
-	fi
+    echo "Downloading $url, and saving it as $output_file."
+    # Extract duration from associate metadata file
+    #seconds=$(python3 bbb.py duration "$url")
+    python3 ./download_bbb_data.py -V "$url" "$video_id"
+    seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
+    seconds=$( echo "($seconds+0.5)/1" | bc )
+    if [ $? -ne 0 ]; then
+	# bbb.py failed because of a wrong url
+	exit 1
     fi
 
     # Add some delay for selenium to complete
     seconds=$(expr $seconds + 5)
+    if [ $? -ne 0 ]; then
+	exit 1
+    fi
 
     container_name=grid$$
 
@@ -174,7 +177,7 @@ if [ -z "$input_file" ]; then
     url=$1
     if [ -n "$url" ]; then
 	video_id=$(python3 bbb.py id "$url")
-	capture $url $output_file $video_id 2>&1 |tee capture_${video_id}.log
+	capture "$url" "$output_file" "$video_id" 2>&1 |tee "capture_${video_id}.log"
     fi
 else
     if ! [ -r $input_file ]; then
@@ -185,7 +188,7 @@ else
     while read url output_file ; do
 	if [ -n "$url" ]; then
 	    video_id=$(python3 bbb.py id "$url")
-	    capture $url $output_file $video_id 2>&1 |tee capture_${video_id}.log
+	    capture "$url" "$output_file" "$video_id" 2>&1 |tee "capture_${video_id}.log"
 	fi
     done < $input_file
     exit 1
