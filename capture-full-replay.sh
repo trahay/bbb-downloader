@@ -87,11 +87,16 @@ function capture() {
     # Extract duration from associate metadata file
     #seconds=$(python3 bbb.py duration "$url")
     python3 ./download_bbb_data.py -V "$url" "$video_id"
-    seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
-    seconds=$( echo "($seconds+0.5)/1" | bc )
-    if [ $? -ne 0 ]; then
-	# bbb.py failed because of a wrong url
-	exit 1
+    if [ $stop_duration -eq 0 ]; then
+	seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
+	seconds=$( echo "($seconds+0.5)/1" | bc )
+	if [ $? -ne 0 ]; then
+	    # bbb.py failed because of a wrong url
+	    exit 1
+	fi
+
+    else
+	seconds=$stop_duration
     fi
 
     # Add some delay for selenium to complete
