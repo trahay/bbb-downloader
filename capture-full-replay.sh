@@ -89,10 +89,14 @@ function capture() {
     python3 ./download_bbb_data.py -V "$url" "$video_id"
     if [ $stop_duration -eq 0 ]; then
 	seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
-	seconds=$( echo "($seconds+0.5)/1" | bc )
-	if [ $? -ne 0 ]; then
-	    # bbb.py failed because of a wrong url
-	    exit 1
+	seconds=$( echo "($seconds+0.5)/1" | bc 2>/dev/null)
+	if [ -z "$seconds" ]; then
+	    seconds=$(python3 bbb.py duration "$url")
+	    if [ -z "$seconds" ]; then
+		echo "Failed to detect the duration of the presentation" >&2
+		# bbb.py failed because of a wrong url
+		exit 1
+	    fi
 	fi
 
     else
@@ -101,7 +105,8 @@ function capture() {
 
     # Add some delay for selenium to complete
     seconds=$(expr $seconds + 5)
-    if [ $? -ne 0 ]; then
+    if [ -z "$seconds" ]; then
+	echo "Failed to detect the duration of the presentation" >&2
 	exit 1
     fi
 

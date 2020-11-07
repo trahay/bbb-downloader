@@ -122,14 +122,15 @@ if __name__ == '__main__' :
         i=1
         os.makedirs(output_slides_dir, exist_ok=True)
         for slide in extractor.slides:
-            print("["+str(i)+"/"+str(len(extractor.slides))+"]  "+slide)
-            i=i+1
+            if not slide is None:
+                print("["+str(i)+"/"+str(len(extractor.slides))+"]  "+slide)
+                i=i+1
 
-            slide_url=website + "/presentation/"+meeting_id+"/"+slide
-            slide_name=output_slides_dir+slide.split('/')[-1]
+                slide_url=website + "/presentation/"+meeting_id+"/"+slide
+                slide_name=output_slides_dir+slide.split('/')[-1]
 
-            r = requests.get(slide_url)
-            open(slide_name , 'wb').write(r.content)
+                r = requests.get(slide_url)
+                open(slide_name , 'wb').write(r.content)
 
     if download_thumbnails:
         # download thummbnails in Thumbnails
@@ -162,8 +163,8 @@ if __name__ == '__main__' :
                 video_name=output_videos_dir+video_url.split('/')[-1]
                 video_name = ".".join(video_name.split('.')[:-1])+'.'+ file_format
                 video_url = ".".join(video_url.split('.')[:-1])+'.'+ file_format
-                file_format = download_video(video_url, video_name, file_format)
-                if not file_format:
+                downloaded_file_format = download_video(video_url, video_name, file_format)
+                if not downloaded_file_format:
                     print("["+str(i)+"/"+str(len(extractor.formats))+"]  no '" + format_id + "' recording could be found at " + video_url + ".")
                 else:
                     print("["+str(i)+"/"+str(len(extractor.formats))+"]  saved '"+format_id+ "' ("+video_url+").")
