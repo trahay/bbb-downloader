@@ -83,7 +83,7 @@ function capture() {
 	output_file=$video_id.mp4
     fi
 
-    echo "Downloading $url, and saving it as $output_file."
+    echo "Downloading $url, and saving it as '$output_file'."
     # Extract duration from associate metadata file
     #seconds=$(python3 bbb.py duration "$url")
     python3 ./download_bbb_data.py -V "$url" "$video_id"
@@ -197,6 +197,7 @@ else
 
     while read url output_file ; do
 	if [ -n "$url" ]; then
+	    output_file=$(echo $output_file| tr -d '\r')
 	    video_id=$(python3 bbb.py id "$url")
 	    capture "$url" "$output_file" "$video_id" 2>&1 |tee "capture_${video_id}.log"
 	fi
