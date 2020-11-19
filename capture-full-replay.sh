@@ -124,6 +124,9 @@ function capture() {
 	   -e FFMPEG_CODEC_ARGS="-vcodec libx264 -preset ultrafast -pix_fmt yuv420p -strict -2 -acodec aac" \
 	   elgalu/selenium
 
+    if [ $? -ne 0 ]; then
+	echo "docker run failed!" >&2
+	exit 1
     bound_port=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "24444/tcp") 0).HostPort}}' $container_name)
 
     docker exec $container_name wait_all_done 30s
