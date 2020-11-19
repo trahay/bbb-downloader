@@ -127,6 +127,7 @@ function capture() {
     if [ $? -ne 0 ]; then
 	echo "docker run failed!" >&2
 	exit 1
+    fi
     bound_port=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "24444/tcp") 0).HostPort}}' $container_name)
 
     docker exec $container_name wait_all_done 30s
