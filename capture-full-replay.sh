@@ -86,12 +86,12 @@ function capture() {
     echo "Downloading $url, and saving it as '$output_file'."
     # Extract duration from associate metadata file
     #seconds=$(python3 bbb.py duration "$url")
-    python3 ./download_bbb_data.py -V "$url" "$video_id"
+    python3 $scriptdir/download_bbb_data.py -V "$url" "$video_id"
     if [ $stop_duration -eq 0 ]; then
 	seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
 	seconds=$( echo "($seconds+0.5)/1" | bc 2>/dev/null)
 	if [ -z "$seconds" ]; then
-	    seconds=$(python3 bbb.py duration "$url")
+	    seconds=$(python3 $scriptdir/bbb.py duration "$url")
 	    if [ -z "$seconds" ]; then
 		echo "Failed to detect the duration of the presentation" >&2
 		# bbb.py failed because of a wrong url
@@ -137,7 +137,7 @@ function capture() {
     echo
 
     # Run selenium to capture video
-    node selenium-play-bbb-recording.js "$url" $seconds $bound_port &
+    node $scriptdir/selenium-play-bbb-recording.js "$url" $seconds $bound_port &
 
     # First wait for making sure the playback is started
     sleep 10
@@ -157,6 +157,7 @@ function capture() {
 
     docker cp $container_name:/videos/. $output_dir/
     docker stop $container_name
+    docker kill $container_name
 
     captured_video=$(ls -1 $output_dir/*.mp4)
 
@@ -166,7 +167,7 @@ function capture() {
 	else
 	    OPTIONS=""
 	fi
-	. $scriptdir/crop_video.sh -s "$startup_duration" -e "$stop_duration" $OPTIONS $captured_video $output_file
+	bash $scriptdir/crop_video.sh -s "$startup_duration" -e "$stop_duration" $OPTIONS $captured_video $output_file
     else
 	mv $captured_video $output_file
     fi
@@ -190,7 +191,7 @@ if [ -z "$input_file" ]; then
 
     url=$1
     if [ -n "$url" ]; then
-	video_id=$(python3 bbb.py id "$url")
+	video_id=$(python3 $scriptdir/bbb.py id "$url")
 	capture "$url" "$output_file" "$video_id" 2>&1 |tee "capture_${video_id}.log"
     fi
 else
@@ -202,7 +203,7 @@ else
     while read url output_file ; do
 	if [ -n "$url" ]; then
 	    output_file=$(echo $output_file| tr -d '\r')
-	    video_id=$(python3 bbb.py id "$url")
+	    video_id=$(python3 $scriptdir/bbb.py id "$url")
 	    capture "$url" "$output_file" "$video_id" 2>&1 |tee "capture_${video_id}.log"
 	fi
     done < $input_file
