@@ -20,7 +20,7 @@ OPTIONS:
    -m   	       	            Only show the main screen (ie. remove the webcam)
    -c 				    Don't crop the output video
    -o output_file		    Select the output file
-   -s 				    Save all the downloaded videos
+   -S 				    Save all the downloaded videos
    -i input_file		    Download all the videos specified in input_file
 EOF
 }
