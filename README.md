@@ -37,6 +37,13 @@ everything but slides, which may be your first option.
 
 ## Downloading already available recordings
 
+First download and install python and required dependencies for it:
+```
+sudo apt update
+sudo apt install python3 python3-pip
+pip3 install -r python-requirements.txt
+```
+
 To download the videos and slides which are already available to view
 in the BBB playback page, simply pass its URL to the
 `download_bbb_data.py`:
@@ -57,6 +64,11 @@ The script downloads the following files:
 
 ### Adding the sound track to the deskshare video
 
+For this to work we need to install ffmpeg and bc:
+```
+sudo apt update
+sudo apt install ffmpeg bc
+```
 
 The recorded sound track is stored in the webcam video, and the
 deskshare does not contain any sound. To integrate the sound track to
@@ -73,6 +85,12 @@ The script creates two files:
 
 
 ### Selecting video format
+
+For this to work we need to install ffmpeg and bc:
+```
+sudo apt update
+sudo apt install ffmpeg bc
+```
 
 Depending on the configuration of your BBB instance, the recorded
 videos will be available on the server directly in `mp4` or `webm`
@@ -102,10 +120,12 @@ The `capture-full-replay.sh` will require some tools (Docker, ffmpeg,
 Python 3,...).
 
 Install some dependencies, before launching it:
-1. `sudo aptitude install bc ffmpeg docker.io python3 npm python3-pip docker.io`
-2. `npm install`
-3. `pip3 install progressbar numpy`
-
+```
+sudo apt update
+sudo apt install bc ffmpeg docker.io python3 npm python3-pip docker.io
+npm install
+pip3 install -r python-requirements.txt
+```
 You're now ready to capture the replay of a recording, by issuing:
 
 ```
@@ -118,9 +138,14 @@ playback of the recording...
 
 Wait until the full playback is done, and get the resulting MP4 video.
 
+Its recommended (but not necessary) to pull the elgalu/selenium docker image before running the script for the first time:
+```
+docker pull elgalu/selenium:latest
+```
+
 More options are available with `./capture-full-replay.sh --help`
 
-See this video for an explanation of how the tool works, and a demo: 
+See this video for an explanation of how the tool works, and a demo:
 
 [<img src="https://i.vimeocdn.com/video/895688106.jpg" width="50%">](https://player.vimeo.com/video/420302036)
 

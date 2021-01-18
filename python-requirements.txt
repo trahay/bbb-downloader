@@ -1,0 +1,4 @@
+wheel>=0.36.2
+requests>=2.25.1
+progressbar>=2.5
+numpy>=1.19.5
