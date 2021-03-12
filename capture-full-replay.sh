@@ -22,6 +22,7 @@ OPTIONS:
    -o output_file		    Select the output file
    -S 				    Save all the downloaded videos
    -i input_file		    Download all the videos specified in input_file
+   -v                               Enable verbose mode 
 EOF
 }
 
@@ -33,7 +34,8 @@ crop=y
 output_file=""
 save=n
 input_file=""
-while getopts 's:e:mco:Si:' OPTION; do
+verbose=n
+while getopts 's:e:mco:Si:v' OPTION; do
     case $OPTION in
 	s)
 	    startup_duration=$OPTARG
@@ -56,6 +58,9 @@ while getopts 's:e:mco:Si:' OPTION; do
 	i)
 	    input_file=$OPTARG
 	    ;;
+	v)
+	    verbose=y
+	    ;;
 	?)
 	usage
 	exit 2
@@ -65,6 +70,10 @@ done
 
 # remove the options from the command line
 shift $(($OPTIND - 1))
+
+if [ $verbose = y ]; then
+    set -x
+fi
 
 function capture() {
     url=$1
@@ -86,6 +95,7 @@ function capture() {
     echo "Downloading $url, and saving it as '$output_file'."
     # Extract duration from associate metadata file
     #seconds=$(python3 bbb.py duration "$url")
+
     python3 $scriptdir/download_bbb_data.py -V "$url" "$video_id"
     if [ $stop_duration -eq 0 ]; then
 	seconds=$(ffprobe -i $video_id/Videos/webcams.webm -show_entries format=duration -v quiet -of csv="p=0")
@@ -148,7 +158,13 @@ function capture() {
     # "sleep", we use the progress bar script.
     # Use plain "sleep" if on MacOSX or other cases where progress_bar won't do.
     #sleep $(echo "$seconds - 10" | bc)
-    progress_bar $(echo "$seconds - 10" | bc)
+    progress_duration=$(echo "$seconds - 10" | bc)
+
+    set +x # disable verbosity to avoid flooding the logs
+    progress_bar $progress_duration
+    if [ $verbose = y ]; then
+	set -x
+    fi
 
     # Save the captured video
     docker exec $container_name stop-video
