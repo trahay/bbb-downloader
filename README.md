@@ -74,7 +74,7 @@ The recorded sound track is stored in the webcam video, and the
 deskshare does not contain any sound. To integrate the sound track to
 the deskshare video, run the `integrate_soundtrack.sh` script:
 
-```./integrate_soundtrack.sh Videos [output_file]```
+```./integrate_soundtrack.sh Videos [output_file].[ext]```
 
 
 The script creates two files:
