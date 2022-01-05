@@ -49,14 +49,19 @@ _x = lambda p: xpath_with_ns(p, {'xlink': 'http://www.w3.org/1999/xlink'})
 
 class BigBlueButtonExtractor:
     _VALID_URL = r'(?P<website>https?://[^/]+)/playback/presentation/(?P<version>[0-9.]+)/playback.html\?meetingId=(?P<id>[0-9a-f\-]+)'
+    _VALID_URL2 = r'(?P<website>https?://[^/]+)/playback/presentation/(?P<version>[0-9.]+)/(?P<id>[0-9a-f\-]+).*'
+
     _TIMESTAMP_UNIT = 30000
 
     def _real_extract(self, url):
         self._VALID_URL_RE = re.compile(self._VALID_URL)
         m = self._VALID_URL_RE.match(url)
         if m is None:
-            sys.stderr.write(url + " is not a BBB video\n")
-            sys.exit(1);
+            self._VALID_URL_RE = re.compile(self._VALID_URL2)
+            m = self._VALID_URL_RE.match(url)
+            if m is None:
+                sys.stderr.write(url + " is not a BBB video\n")
+                sys.exit(1);
 
         self.website = m.group('website')
 
