@@ -12,6 +12,17 @@ import argparse
 import re
 #import pprint
 
+def download(url, filename, timeout=30):
+    try:
+        r = requests.get(url, timeout=timeout)
+        open(filename , 'wb').write(r.content)
+    except:
+        e = sys.exc_info()[0]
+        print("Cannot download "+url+" : "+e.__name__)
+        return False
+    return True
+
+
 # Borrowed from https://stackoverflow.com/a/37574635 adjusting the buffer size to 10Mb
 def download_file(url, filename, n_chunk=1):
     r = requests.get(url, stream=True)
@@ -129,8 +140,7 @@ if __name__ == '__main__' :
                 slide_url=website + "/presentation/"+meeting_id+"/"+slide
                 slide_name=output_slides_dir+slide.split('/')[-1]
 
-                r = requests.get(slide_url)
-                open(slide_name , 'wb').write(r.content)
+                download(slide_url, slide_name, 10)
 
     if download_thumbnails:
         # download thummbnails in Thumbnails
@@ -142,8 +152,8 @@ if __name__ == '__main__' :
             i=i+1
 
             thumbnail_name=output_thumbnails_dir+thumbnail['url'].split('/')[-1]
-            r = requests.get(thumbnail['url'])
-            open(thumbnail_name , 'wb').write(r.content)
+            download(thumbnail['url'], thumbnail_name, timeout=1)
+
 
     if download_videos:
         # download videos in Videos
