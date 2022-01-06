@@ -33,7 +33,14 @@ driver.manage().window().maximize();
 
 /* Start playback */
 driver.sleep(1000 * 4);
-driver.findElement(By.className('acorn-play-button')).click();
+try {
+    driver.wait(function() {
+	driver.findElement(By.className('acorn-play-button')).click();
+    }, timeout);
+} catch(e) {
+    // This may crash if the play button is not found. TODO: crash with a pretty message
+    driver.findElement(By.className('vjs-play-control vjs-button')).click();
+}
 
 /* Stop after the required number of seconds */
 driver.sleep(1000 * myArgs[1]);
