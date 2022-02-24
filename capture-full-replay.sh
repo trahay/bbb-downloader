@@ -197,6 +197,9 @@ function capture() {
     echo "Please wait for $seconds seconds, while we capture the playback..."
     echo
 
+    if [ -d /opt/bbb-downloader/node_modules ]; then
+	export NODE_PATH="$NODE_PATH:/opt/bbb-downloader/node_modules"
+    fi
     # Run selenium to capture video
     node $scriptdir/selenium-play-bbb-recording.js "$url" $seconds $container_ip:$bound_port &
 
