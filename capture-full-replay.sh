@@ -103,7 +103,7 @@ function capture_in_docker() {
 	docker_option="$docker_option -o '/tmp/output/$output_filename'"
     fi
    
-    docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock  --volume "$output_dir":/tmp/output bbb-downloader bash -c "capture-full-replay.sh $docker_option $url"
+    docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock  --volume "$output_dir":/tmp/output ftrahay/bbb-downloader bash -c "capture-full-replay.sh $docker_option $url"
     exit
 }
 
