@@ -35,31 +35,42 @@ output_file=""
 save=n
 input_file=""
 verbose=n
-while getopts 's:e:mco:Si:v' OPTION; do
+docker=n
+docker_option=""
+while getopts 'ds:e:mco:Si:v' OPTION; do
     case $OPTION in
+	d)
+	    docker=y
+	    ;;
 	s)
 	    startup_duration=$OPTARG
+	    docker_option="$docker_option -s $startup_duration"
 	    ;;
 	e)
 	    stop_duration=$OPTARG
+	    docker_option="$docker_option -e $stop_duration"
 	    ;;
 	m)
 	    main_screen_only=y
+	    docker_option="$docker_option -m"
 	    ;;
 	c)
 	    crop=n
+	    docker_option="$docker_option -c"
 	    ;;
 	o)
 	    output_file=$OPTARG
 	    ;;
 	S)
 	    save=y
+	    docker_option="$docker_option -s"
 	    ;;
 	i)
 	    input_file=$OPTARG
 	    ;;
 	v)
 	    verbose=y
+	    docker_option="$docker_option -v"
 	    ;;
 	?)
 	usage
@@ -68,12 +79,33 @@ while getopts 's:e:mco:Si:v' OPTION; do
     esac
 done
 
+
 # remove the options from the command line
 shift $(($OPTIND - 1))
 
 if [ $verbose = y ]; then
     set -x
 fi
+
+function capture_in_docker() {
+    url=$1
+    output_file=$2
+
+    echo "Docker mode"
+
+    output_dir="$PWD"
+    if [ -n "$output_file" ]; then
+	output_dir=$(realpath $(dirname "$output_file"))
+	if ! [ -d "$output_dir" ]; then
+	    mkdir -p "$output_dir"
+	fi
+	output_filename=$(basename "$output_file")
+	docker_option="$docker_option -o '/tmp/output/$output_filename'"
+    fi
+   
+    docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock  --volume "$output_dir":/tmp/output bbb-downloader bash -c "capture-full-replay.sh $docker_option $url"
+    exit
+}
 
 function capture() {
     url=$1
@@ -90,6 +122,11 @@ function capture() {
 
     if [ -z "$output_file" ]; then
 	output_file=$video_id.mp4
+    fi
+
+    if [ "$docker" = y ]; then
+	capture_in_docker "$url" "$output_file"
+	exit
     fi
 
     echo "Downloading $url, and saving it as '$output_file'."
