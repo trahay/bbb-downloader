@@ -112,7 +112,7 @@ function capture_in_docker() {
         echo "Network $network_name already exists"
     fi
 
-    docker run -it --network="$network_name" --rm \
+    docker run --network="$network_name" --rm \
 	   -v /var/run/docker.sock:/var/run/docker.sock\
 	   -v "$scriptdir":/bbb-downloader \
 	   -v "$output_dir":/tmp/output \
