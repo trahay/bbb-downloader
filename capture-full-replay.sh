@@ -5,6 +5,8 @@ scriptdir=$(dirname $(realpath $0))
 # progress_bar.sh copied from https://github.com/nachoparker/progress_bar.sh
 . $scriptdir/progress_bar.sh
 
+
+network_name=bbb
 # This will capture the replay, played in a controlled web browser,
 # using a Docker container running Selenium
 
@@ -102,8 +104,20 @@ function capture_in_docker() {
 	output_filename=$(basename "$output_file")
 	docker_option="$docker_option -o '/tmp/output/$output_filename'"
     fi
-   
-    docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock  --volume "$output_dir":/tmp/output ftrahay/bbb-downloader bash -c "capture-full-replay.sh $docker_option $url"
+
+    if ! docker network inspect "$network_name" 2> /dev/null > /dev/null ; then
+	echo "Creating network $network_name"
+	docker network create "$network_name"
+    else
+        echo "Network $network_name already exists"
+    fi
+
+    docker run -it --network="$network_name" --rm \
+	   -v /var/run/docker.sock:/var/run/docker.sock\
+	   -v "$scriptdir":/bbb-downloader \
+	   -v "$output_dir":/tmp/output \
+	   ftrahay/bbb-downloader \
+	   bash -c "/bbb-downloader/capture-full-replay.sh $docker_option $url"
     exit
 }
 
@@ -162,7 +176,7 @@ function capture() {
     # Startup Selenium server
     #  -e VIDEO_FILE_EXTENSION="mkv" \
 	#  -p 5920:25900 : we don't need to connect via VNC
-    docker run --rm -d --name=$container_name -P --expose 24444 \
+    docker run --network="$network_name" --rm -d --name=$container_name -P -p 24444:24444 \
 	   --shm-size=2g -e VNC_PASSWORD=hola \
 	   -e VIDEO=true -e AUDIO=true \
 	   -e SCREEN_WIDTH=1080 -e SCREEN_HEIGHT=720 \
@@ -176,7 +190,7 @@ function capture() {
 	exit 1
     fi
     bound_port=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "24444/tcp") 0).HostPort}}' $container_name)
-
+    container_ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $container_name)
     docker exec $container_name wait_all_done 30s
 
     echo 
@@ -184,7 +198,7 @@ function capture() {
     echo
 
     # Run selenium to capture video
-    node $scriptdir/selenium-play-bbb-recording.js "$url" $seconds $bound_port &
+    node $scriptdir/selenium-play-bbb-recording.js "$url" $seconds $container_ip:$bound_port &
 
     # First wait for making sure the playback is started
     sleep 10
