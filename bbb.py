@@ -77,11 +77,21 @@ class BigBlueButtonExtractor:
         self.id = root.find('id').text
         meta = root.find('./meta')
         self.meeting_name = meta.find('meetingName').text
-        self.start_time = int(root.find('start_time').text)
 
+        self.start_time = int(root.find('start_time').text)
         self.end_time = int(root.find('end_time').text)
 
-        self.duration = int(float(self.end_time-self.start_time)/self._TIMESTAMP_UNIT)
+        playback = root.find('./playback')
+        if not playback is None:
+            # The duration (in ms) is specified in the playback section of the metadata
+            duration = int(playback.find('duration').text)
+            self.duration = int(duration/1000)
+        else:
+            # If duration is not found, we need to compute it based on the start/end date.
+            # It is probably not accurate (esp. if the recording is paused), but that's better
+            # than nothing
+            self.duration = int(float(self.end_time-self.start_time)/self._TIMESTAMP_UNIT)
+
 
         # This code unused : have to grasp what to do with thumbnails
         self.thumbnails = []
