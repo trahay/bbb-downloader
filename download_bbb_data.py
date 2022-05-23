@@ -25,7 +25,16 @@ def download(url, filename, timeout=30):
 
 # Borrowed from https://stackoverflow.com/a/37574635 adjusting the buffer size to 10Mb
 def download_file(url, filename, n_chunk=1):
-    r = requests.get(url, stream=True)
+
+    # Tell requests library to expect the following mime types
+    headers = {"accept":"video/webm,video/mp4,video/*"}
+
+    # The requests library normally throws exception if request fails
+    try:
+        r = requests.get(url, stream=True, headers=headers)
+    except:
+        return 404
+
     # Estimates the number of bar updates
     block_size = 10*1024*1024
 
